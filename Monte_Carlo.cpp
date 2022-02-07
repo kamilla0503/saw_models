@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     //Lattice_2D l(100);
     int N = std::stoi(argv[1]);
     double J = 0.01*(double)std::stoi(argv[2]);
-    Monte_Carlo_on_SAWS m(3,N,J,10000,10000000000,1000);
+    Monte_Carlo_on_SAWS m(3,N,J,10000000,10000000000,10000000);
     m.run_simulation();
     //XY_SAW xy1(10);
 
