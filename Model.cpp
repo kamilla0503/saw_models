@@ -311,8 +311,8 @@ void XY_SAW ::ClusterStep(double J)
     sequence_on_lattice[coord] = (s > 0) ? acos(c) : -acos(c);
     int sign = (x1 < 0) ? -1 : (x1 > 0);
     double x = x1;
-    std::valarray<bool> used_coords;
-    used_coords.resize(lattice->NumberOfNodes(), false  );
+    //std::valarray<bool> used_coords;
+    //used_coords.resize(lattice->NumberOfNodes(), false  );
 
     std::queue<long int> Cluster;
 
@@ -351,6 +351,14 @@ void XY_SAW ::ClusterStep(double J)
                 sequence_on_lattice[step] = (s > 0) ? acos(c) : -acos(c);
             }
         }
+    }
+
+    long int current = start_conformation;
+    for (int e = 0; e < L; e++)
+    {
+        used_coords[current] = false;
+
+        current = next_monomers[current];
     }
 
     Energy();
@@ -416,6 +424,8 @@ XY_SAW::XY_SAW(short int n, short d) : SAW_model(n, d) {
     {
         directions[i]=0;
     }
+
+    used_coords.resize(lattice->NumberOfNodes(), false  );
 }
 
 void XY_SAW::Energy() {

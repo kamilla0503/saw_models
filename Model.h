@@ -110,6 +110,8 @@ protected:
     mc_stats::ScalarObservable<long double> magnetization_4;
     std::map <long int, long long int> count_cos;
 
+    std::valarray<bool> used_coords;
+
 };
 
 

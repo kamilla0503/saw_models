@@ -19,8 +19,8 @@ public:
     Lattice( short max_seq_size = 10 ) {lattice_side = max_seq_size; };
     long int lattice_size() {return lattice_side;};
     long int NumberOfNodes () {return number_of_nodes;};
-    virtual short int ndim() = 0 ;
-    virtual short int ndim2() = 0;
+    inline const virtual short int ndim() = 0 ;
+    inline const virtual short int ndim2() = 0;
     std::valarray<coord_t> map_of_contacts_int;
     //that is a mistake
     //solve it later
@@ -38,8 +38,8 @@ protected:
 class Lattice_2D : public Lattice {
 public:
     Lattice_2D( short max_seq_size = 10);
-    short int ndim() { return 2; }
-    short int ndim2() {return 4;}
+    inline const short int ndim() { return 2; }
+    inline const short int ndim2() {return 4;}
 
     //std::valarray<int> inverse_steps = {1,0,3,2} ;
     std::vector <std::vector<int>> steps = {{1,0}, {-1,0}, {0,1}, {0,-1} };
@@ -52,8 +52,8 @@ private:
 class Lattice_3D : public Lattice {
 public:
     Lattice_3D( short max_seq_size = 10);
-    short int ndim() { return 3; }
-    short int ndim2() {return 6;}
+    inline const short int ndim() { return 3; }
+    inline const short int ndim2() {return 6;}
 
     //std::valarray<int> inverse_steps = {1,0,3,2} ;
     std::vector <std::vector<int>> steps {   {1,0,0}, {0,1,0}, {0,0,1},

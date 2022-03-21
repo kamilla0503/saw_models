@@ -68,20 +68,36 @@ void Monte_Carlo_on_SAWS::run_simulation()
         }
     }
 }
+
+/*Monte_Carlo_on_SAWS::~Monte_Carlo_on_SAWS()
+{
+    delete model;
+
+}*/
+
+
 #include "gperftools/profiler.h"
+//unsigned int thread_qty = std::max(atoi(std::getenv("OMP_NUM_THREADS")), 1);
+//omp_set_num_threads(1);
+//#include <omp.h>
+
 int main(int argc, char *argv[])
 {
+
+    //omp_set_num_threads(1);
     //Lattice_2D l(100);
     int N = std::stoi(argv[1]);
     double J = 0.01*(double)std::stoi(argv[2]);
 
 
-    Monte_Carlo_on_SAWS m(3,N,J,10000,10000000,100);
-    //Monte_Carlo_on_SAWS m(3,N,J,100000000,10000000000000,10000000);
-    ProfilerStart("main.prof");
+    //Monte_Carlo_on_SAWS m(3,N,J,10000,100000000,100);
+    Monte_Carlo_on_SAWS m(3,N,J,10000,100000000000000,1000);
+    //ProfilerStart("main.prof");
     m.run_simulation();
-    ProfilerStop();
+    //ProfilerStop();
     //XY_SAW xy1(10);
 
     return 0;
 }
+
+

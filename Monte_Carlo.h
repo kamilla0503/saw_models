@@ -34,10 +34,12 @@ public:
                  long int steps_to_equilibrium_ = 81000000, long int mc_steps_ = 5000000000000,
                  long int steps_to_write_=1000000);
 
+    //~Monte_Carlo_on_SAWS();
+
     void run_simulation();
 
 private:
-    double p_for_local_update=0.8, p_for_reconnect=0.999;
+    double p_for_local_update=0.5, p_for_reconnect=0.90;
 };
 
 
