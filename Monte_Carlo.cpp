@@ -76,7 +76,7 @@ void Monte_Carlo_on_SAWS::run_simulation()
 }*/
 
 
-#include "gperftools/profiler.h"
+//#include "gperftools/profiler.h"
 //unsigned int thread_qty = std::max(atoi(std::getenv("OMP_NUM_THREADS")), 1);
 //omp_set_num_threads(1);
 //#include <omp.h>
