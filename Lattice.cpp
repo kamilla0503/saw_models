@@ -168,8 +168,9 @@ void Lattice_3D::radius(SAW_model *model) {
             //расстояние на торе
             xdiff1 = xs[e1] - xs[e];
             ydiff1 = ys[e1] - ys[e];
+            zdiff1 = zs[e1] - zs[e];
 
-            r_g = r_g + xdiff1 * xdiff1 + ydiff1 * ydiff1;
+            r_g = r_g + xdiff1 * xdiff1 + ydiff1 * ydiff1 + zdiff1*zdiff1;
 
             A_element +=xdiff1 * xdiff1;
             D_element += ydiff1 * ydiff1;
