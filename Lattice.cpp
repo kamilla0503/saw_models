@@ -155,7 +155,7 @@ void Lattice_3D::radius(SAW_model *model) {
     model->count_Y[abs(ys.back())]+=1;
 
     long double r_g = 0;
-    long double xdiff1, ydiff1;
+    long double xdiff1, ydiff1, zdiff1;
     double  A_element=0, D_element=0, BC_element2 = 0;
 
     //long long int second_current;
