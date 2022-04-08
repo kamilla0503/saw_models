@@ -23,7 +23,7 @@ std::uniform_real_distribution<double> distribution_theta(-PI, PI);
 std::random_device generatorstheta;
 
 //change after
-std::uniform_int_distribution<int> distribution1(0, 5);
+std::uniform_int_distribution<int> distribution1(0, 3);
 //std::mt19937 generators1(123);
 std::random_device generators2;
 

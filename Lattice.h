@@ -24,7 +24,7 @@ public:
     std::valarray<coord_t> map_of_contacts_int;
     //that is a mistake
     //solve it later
-    std::valarray<int> inverse_steps = { 1, 0, 3, 2, 5, 4 }; // = {1,0,3,2} ;//= { 1, 0, 3, 2, 5, 4 };//= {1,0,3,2} ;
+    std::valarray<int> inverse_steps = {1,0,3,2} ;//{ 1, 0, 3, 2, 5, 4 }; // = {1,0,3,2} ;//= { 1, 0, 3, 2, 5, 4 };//= {1,0,3,2} ;
     //std::vector<int>  inverse_steps ;//= std::vector<int>(10);//? should work for different lattices
     //std::valarray<int> inverse_steps ;
     std::vector <std::vector<int>> steps ;
