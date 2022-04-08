@@ -32,15 +32,15 @@ protected:
     double E;
     virtual void Energy () = 0; //call Hamiltonian here
 
-    mc_stats::ScalarObservable<long double> energy; //сохранение энергии
-    mc_stats::ScalarObservable<long double> energy_sq;
-    mc_stats::ScalarObservable<long double> energy_4;
+    mc_stats::ScalarObservable<double> energy; //сохранение энергии
+    mc_stats::ScalarObservable<double> energy_sq;
+    mc_stats::ScalarObservable<double> energy_4;
 
     double h_l = 0.001; //длина  бина
 
 protected:
-    std::map <long int, long long int> count_E;
-    std::map <long int, long long int> count_m2;
+    std::map <long int, long int> count_E;
+    std::map <long int, long int> count_m2;
 
 };
 
@@ -79,9 +79,9 @@ public:
     mc_stats::ScalarObservable<double> bulk3;
     mc_stats::ScalarObservable<double> bulk2;
 
-    std::map <long int, long long int> count_R2;
-    std::map <long int, long long int> count_X;
-    std::map <long int, long long int> count_Y;
+    std::map <long int, long int> count_R2;
+    std::map <long int, long int> count_X;
+    std::map <long int, long int> count_Y;
 
 protected:
     int dimension;
@@ -106,9 +106,9 @@ public:
 protected:
     mc_stats::ScalarObservable<double> mags_sin;
     mc_stats::ScalarObservable<double> mags_cos;
-    mc_stats::ScalarObservable<long double> magnetization_sq;
-    mc_stats::ScalarObservable<long double> magnetization_4;
-    std::map <long int, long long int> count_cos;
+    mc_stats::ScalarObservable<double> magnetization_sq;
+    mc_stats::ScalarObservable<double> magnetization_4;
+    std::map <long int, long int> count_cos;
 
     std::valarray<bool> used_coords;
 
