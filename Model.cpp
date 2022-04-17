@@ -405,27 +405,78 @@ void SAW_model::Reconnect(int j)
 
 XY_SAW::XY_SAW(short int n, short d) : SAW_model(n, d) {
     start_conformation=0;
-    end_conformation=n-1;
 
-    for (int i = 1; i < n-1; i++)
+
+    coord_t middle = n/2;
+    //std::cout << "middle " << middle << std::endl;
+    for (int i = 1; i < middle; i++)
+    {
+        previous_monomers[i]=lattice->map_of_contacts_int[lattice->ndim2()*i +1];
+        sequence_on_lattice[i]=PI;
+        next_monomers[i]=lattice->map_of_contacts_int[lattice->ndim2()*i +0];
+        directions[i]=0;
+    }
+    //middle
+    previous_monomers[middle]=lattice->map_of_contacts_int[lattice->ndim2()*middle + 1];
+    sequence_on_lattice[middle]=PI;
+    next_monomers[middle]=lattice->map_of_contacts_int[lattice->ndim2()*middle + 2];
+    directions[middle] = 2;
+
+    middle = next_monomers[middle];
+    //std::cout << "middle " << middle << std::endl;
+    previous_monomers[middle]=lattice->map_of_contacts_int[lattice->ndim2()*(middle)+ 3];
+    sequence_on_lattice[middle]=PI;
+    next_monomers[middle]=lattice->map_of_contacts_int[lattice->ndim2()*(middle) + 1];
+    directions[middle] = 1;
+
+    middle = next_monomers[middle];
+    //std::cout << "middle " << middle << std::endl;
+    for (int i = n/2+2; i < n-1; i++)
+    {
+        //std::cout << "next " << lattice->map_of_contacts_int[lattice->ndim2()*middle  +0] << std::endl;
+        previous_monomers[middle ]=lattice->map_of_contacts_int[lattice->ndim2()*middle  +0];
+        sequence_on_lattice[middle ]=PI;
+        next_monomers[middle ]=lattice->map_of_contacts_int[lattice->ndim2()*middle  +1];
+        directions[middle] = 1;
+        middle = next_monomers[middle];
+       // std::cout << "middle " << middle << std::endl;
+
+    }
+
+    /*for (int i = 1; i < n-1; i++)
     {
         previous_monomers[i]=i-1;
         sequence_on_lattice[i]=PI;
         next_monomers[i]=i+1;
-    }
+    }*/
+    end_conformation=middle;
+
     sequence_on_lattice[0] = PI;
     sequence_on_lattice[end_conformation] = PI; //начальная последовательность
-    next_monomers[0] = 1;
-    previous_monomers[n-1] = n-2;
+    next_monomers[0] = lattice->map_of_contacts_int[lattice->ndim2()*0 +0];;
+    previous_monomers[end_conformation] = lattice->map_of_contacts_int[lattice->ndim2()*end_conformation +0]; ;
     E =  -(n-1);
 
     //сначала все направления - движение вправо
-    for (int i = 0; i < n-1; i++)
+    /*for (int i = 0; i < n-1; i++)
     {
         directions[i]=0;
-    }
+    }*/
 
     used_coords.resize(lattice->NumberOfNodes(), false  );
+
+
+    /*std::ofstream myfile ("example.txt");
+    long int current =  start_conformation;
+    long int step;
+    int k = 0;
+    for (int e = 0; e <  number_of_spins() ; e++)
+    {
+        myfile <<  directions[current] << " " << sequence_on_lattice[current] << std::endl;
+        current =  next_monomers[current];
+    }
+    myfile.close();*/
+
 }
 
 void XY_SAW::Energy() {
