@@ -110,8 +110,6 @@ void SAW_model::calc_bulc() {
 
 void XY_SAW::FlipMove(double J)
 {
-
-
     long double new_E = 0.;
     double hh = 0.;
     short rand_path = distribution2(generators3);
@@ -331,7 +329,8 @@ void XY_SAW ::ClusterStep(double J)
             tempscalar = cos(sequence_on_lattice[step])*cos(flipdirection)+sin(sequence_on_lattice[step])*sin(flipdirection);
             tempsign = (tempscalar < 0) ? -1 : (tempscalar > 0);
 
-            double P_add =  1 - exp(-2*J*tempscalar*x);
+            double signproduct = std::min(0.0,-2*J*tempscalar*x);
+            double P_add =  1 - exp( signproduct    );
 
             double p = distribution(generator);
             //???
