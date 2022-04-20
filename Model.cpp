@@ -290,7 +290,7 @@ void XY_SAW ::ClusterStep(double J)
     long int choose_spin = distribution_spin(generator_spin);
 
     long int coord = start_conformation;
-    for (long int spin = 1; spin < choose_spin; spin++)
+    for (long int spin = 0; spin < choose_spin; spin++)
     {
         coord = next_monomers[coord];
     }
@@ -306,7 +306,7 @@ void XY_SAW ::ClusterStep(double J)
     if (c<-1.) c=-1;
     if (c>1.) c=1;
 
-    sequence_on_lattice[coord] = (s > 0) ? acos(c) : -acos(c);
+    sequence_on_lattice[coord] = atan2(s,c);//(s > 0) ? acos(c) : -acos(c);
     int sign = (x1 < 0) ? -1 : (x1 > 0);
     double x = x1;
     //std::valarray<bool> used_coords;
@@ -329,13 +329,13 @@ void XY_SAW ::ClusterStep(double J)
             tempscalar = cos(sequence_on_lattice[step])*cos(flipdirection)+sin(sequence_on_lattice[step])*sin(flipdirection);
             tempsign = (tempscalar < 0) ? -1 : (tempscalar > 0);
 
-            double signproduct = std::min(0.0,-2*J*tempscalar*x);
+            double signproduct = std::min(0.0, -2*J*tempscalar*x);
             double P_add =  1 - exp( signproduct    );
 
             double p = distribution(generator);
             //???
             if ( sequence_on_lattice[step]!=-5. &&
-                 tempsign == sign &&
+                 //tempsign == sign &&
                  p < P_add &&
                  !used_coords[step]) {
                 Cluster.push(step);
@@ -347,7 +347,7 @@ void XY_SAW ::ClusterStep(double J)
                 if (s>1.) s=1;
                 if (c<-1.) c=-1;
                 if (c>1.) c=1;
-                sequence_on_lattice[step] = (s > 0) ? acos(c) : -acos(c);
+                sequence_on_lattice[step] = atan2(s,c); //(s > 0) ? acos(c) : -acos(c);
             }
         }
     }
