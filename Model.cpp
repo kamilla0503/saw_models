@@ -285,8 +285,8 @@ void XY_SAW::FlipMove(double J)
 void XY_SAW ::ClusterStep(double J)
 {
     // делаем кластерный апдейт
-    std::uniform_int_distribution<long int> distribution_spin(0, L-1);
-    std::random_device generator_spin;
+    static std::uniform_int_distribution<long int> distribution_spin(0, L-1);
+    static std::random_device generator_spin;
     long int choose_spin = distribution_spin(generator_spin);
 
     long int coord = start_conformation;
@@ -296,7 +296,7 @@ void XY_SAW ::ClusterStep(double J)
     }
 
     double flipdirection = distribution_theta(generatorstheta);
-
+    double olddirection = cos(sequence_on_lattice[coord]);
     double x1 = cos(sequence_on_lattice[coord])*cos(flipdirection)+sin(sequence_on_lattice[coord])*sin(flipdirection);
     double s = sin(sequence_on_lattice[coord])-2*x1*sin(flipdirection);
     double c = cos(sequence_on_lattice[coord])-2*x1*cos(flipdirection);
@@ -306,7 +306,10 @@ void XY_SAW ::ClusterStep(double J)
     if (c<-1.) c=-1;
     if (c>1.) c=1;
 
+    //std::cout << "start" << std::endl;
+    //std::cout << sequence_on_lattice[coord] <<  " ";
     sequence_on_lattice[coord] = atan2(s,c);//(s > 0) ? acos(c) : -acos(c);
+    //std::cout << sequence_on_lattice[coord] <<  std::endl;
     int sign = (x1 < 0) ? -1 : (x1 > 0);
     double x = x1;
     //std::valarray<bool> used_coords;
@@ -323,18 +326,27 @@ void XY_SAW ::ClusterStep(double J)
         temp = Cluster.front();
         Cluster.pop();
 
+        x = cos(flipdirection)*cos(sequence_on_lattice[temp])
+            +sin(flipdirection)*sin(sequence_on_lattice[temp]);
+
         for (int j = 0; j < lattice->ndim2(); j++)
         {
             step = lattice->map_of_contacts_int[lattice->ndim2() * temp + j];
             tempscalar = cos(sequence_on_lattice[step])*cos(flipdirection)+sin(sequence_on_lattice[step])*sin(flipdirection);
+            /*tempscalar = cos(sequence_on_lattice[step])*cos(sequence_on_lattice[temp])
+                        +sin(sequence_on_lattice[step])*sin(sequence_on_lattice[temp]);*/
             tempsign = (tempscalar < 0) ? -1 : (tempscalar > 0);
 
-            double signproduct = std::min(0.0, -2*J*tempscalar*x);
+            double signproduct = std::min(0.0, 2*J*tempscalar*x);
             double P_add =  1 - exp( signproduct    );
+
+
+            //double signproduct = J* cos( olddirection- sequence_on_lattice[step])*cos( sequence_on_lattice[coord]- sequence_on_lattice[step])    ;
+            //double  P_add = 1 - exp (signproduct    );
 
             double p = distribution(generator);
             //???
-            if ( sequence_on_lattice[step]!=-5. &&
+            if ( sequence_on_lattice[step]!=-5 &&
                  //tempsign == sign &&
                  p < P_add &&
                  !used_coords[step]) {
@@ -347,7 +359,9 @@ void XY_SAW ::ClusterStep(double J)
                 if (s>1.) s=1;
                 if (c<-1.) c=-1;
                 if (c>1.) c=1;
+                //std::cout << sequence_on_lattice[step] << " ";
                 sequence_on_lattice[step] = atan2(s,c); //(s > 0) ? acos(c) : -acos(c);
+                //std::cout << sequence_on_lattice[step] << std::endl;
             }
         }
     }
