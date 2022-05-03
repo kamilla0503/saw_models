@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     double J = 0.001*(double)std::stoi(argv[2]);
     std::cout << N << " " << J << std::endl;
     //Monte_Carlo_on_SAWS m(3,N,J,10000,100000000,100);
-    Monte_Carlo_on_SAWS m(3,N,J,20000,100000000000000,100);
+    Monte_Carlo_on_SAWS m(2,N,J,20000,100000000000000,100);
     //ProfilerStart("main.prof");
     m.run_simulation();
     //ProfilerStop();
