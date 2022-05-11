@@ -489,7 +489,7 @@ XY_SAW::XY_SAW(short int n, short d) : SAW_model(n, d) {
         current =  next_monomers[current];
     }
     myfile.close();*/
-
+    Energy();
 }
 
 void XY_SAW::Energy() {
@@ -507,7 +507,7 @@ void XY_SAW::Energy() {
         }
         current_position=next_monomers[current_position];
     }
-    E = -(hh/2.0);
+    E = (hh/2.0);
 }
 
 void XY_SAW::save_measurements() {
