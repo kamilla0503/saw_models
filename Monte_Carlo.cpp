@@ -1,7 +1,7 @@
 //
 // Created by kamilla on 02.02.2022.
 //
-
+#include <fstream>
 #include "Monte_Carlo.h"
 
 Monte_Carlo::Monte_Carlo(short n_, double J_, long steps_to_equilibrium_, long mc_steps_, long steps_to_write_)
@@ -65,7 +65,22 @@ void Monte_Carlo_on_SAWS::run_simulation()
         if ( i> steps_to_equilibrium && i%(100*steps_to_write)==0 )
         {
             model->write_file(i, J);
+
         }
+
+        /*
+        std::ofstream myfile ("example.txt");
+        long int current = model->start_conformation;
+        long int step;
+        int k = 0;
+        for (int e = 0; e < model->number_of_spins() ; e++)
+        {
+            myfile << model->directions[current] << " " << model->sequence_on_lattice[current] << std::endl;
+            current = model->next_monomers[current];
+        }
+        myfile.close();*/
+
+
     }
 }
 
@@ -88,10 +103,9 @@ int main(int argc, char *argv[])
     //Lattice_2D l(100);
     int N = std::stoi(argv[1]);
     double J = 0.001*(double)std::stoi(argv[2]);
-
-
+    std::cout << N << " " << J << std::endl;
     //Monte_Carlo_on_SAWS m(3,N,J,10000,100000000,100);
-    Monte_Carlo_on_SAWS m(2,N,J,10000,100000000000000,100000);
+    Monte_Carlo_on_SAWS m(2,N,J,20000,100000000000000,100);
     //ProfilerStart("main.prof");
     m.run_simulation();
     //ProfilerStop();

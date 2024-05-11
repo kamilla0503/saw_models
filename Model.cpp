@@ -110,8 +110,6 @@ void SAW_model::calc_bulc() {
 
 void XY_SAW::FlipMove(double J)
 {
-
-
     long double new_E = 0.;
     double hh = 0.;
     short rand_path = distribution2(generators3);
@@ -287,18 +285,18 @@ void XY_SAW::FlipMove(double J)
 void XY_SAW ::ClusterStep(double J)
 {
     // делаем кластерный апдейт
-    std::uniform_int_distribution<long int> distribution_spin(0, L-1);
-    std::random_device generator_spin;
+    static std::uniform_int_distribution<long int> distribution_spin(0, L-1);
+    static std::random_device generator_spin;
     long int choose_spin = distribution_spin(generator_spin);
 
     long int coord = start_conformation;
-    for (long int spin = 1; spin < choose_spin; spin++)
+    for (long int spin = 0; spin < choose_spin; spin++)
     {
         coord = next_monomers[coord];
     }
 
     double flipdirection = distribution_theta(generatorstheta);
-
+    double olddirection = cos(sequence_on_lattice[coord]);
     double x1 = cos(sequence_on_lattice[coord])*cos(flipdirection)+sin(sequence_on_lattice[coord])*sin(flipdirection);
     double s = sin(sequence_on_lattice[coord])-2*x1*sin(flipdirection);
     double c = cos(sequence_on_lattice[coord])-2*x1*cos(flipdirection);
@@ -308,7 +306,10 @@ void XY_SAW ::ClusterStep(double J)
     if (c<-1.) c=-1;
     if (c>1.) c=1;
 
-    sequence_on_lattice[coord] = (s > 0) ? acos(c) : -acos(c);
+    //std::cout << "start" << std::endl;
+    //std::cout << sequence_on_lattice[coord] <<  " ";
+    sequence_on_lattice[coord] = atan2(s,c);//(s > 0) ? acos(c) : -acos(c);
+    //std::cout << sequence_on_lattice[coord] <<  std::endl;
     int sign = (x1 < 0) ? -1 : (x1 > 0);
     double x = x1;
     //std::valarray<bool> used_coords;
@@ -325,18 +326,28 @@ void XY_SAW ::ClusterStep(double J)
         temp = Cluster.front();
         Cluster.pop();
 
+        x = cos(flipdirection)*cos(sequence_on_lattice[temp])
+            +sin(flipdirection)*sin(sequence_on_lattice[temp]);
+
         for (int j = 0; j < lattice->ndim2(); j++)
         {
             step = lattice->map_of_contacts_int[lattice->ndim2() * temp + j];
             tempscalar = cos(sequence_on_lattice[step])*cos(flipdirection)+sin(sequence_on_lattice[step])*sin(flipdirection);
+            /*tempscalar = cos(sequence_on_lattice[step])*cos(sequence_on_lattice[temp])
+                        +sin(sequence_on_lattice[step])*sin(sequence_on_lattice[temp]);*/
             tempsign = (tempscalar < 0) ? -1 : (tempscalar > 0);
 
-            double P_add =  1 - exp(-2*J*tempscalar*x);
+            double signproduct = std::min(0.0, 2*J*tempscalar*x);
+            double P_add =  1 - exp( signproduct    );
+
+
+            //double signproduct = J* cos( olddirection- sequence_on_lattice[step])*cos( sequence_on_lattice[coord]- sequence_on_lattice[step])    ;
+            //double  P_add = 1 - exp (signproduct    );
 
             double p = distribution(generator);
             //???
-            if ( sequence_on_lattice[step]!=-5. &&
-                 tempsign == sign &&
+            if ( sequence_on_lattice[step]!=-5 &&
+                 //tempsign == sign &&
                  p < P_add &&
                  !used_coords[step]) {
                 Cluster.push(step);
@@ -348,7 +359,9 @@ void XY_SAW ::ClusterStep(double J)
                 if (s>1.) s=1;
                 if (c<-1.) c=-1;
                 if (c>1.) c=1;
-                sequence_on_lattice[step] = (s > 0) ? acos(c) : -acos(c);
+                //std::cout << sequence_on_lattice[step] << " ";
+                sequence_on_lattice[step] = atan2(s,c); //(s > 0) ? acos(c) : -acos(c);
+                //std::cout << sequence_on_lattice[step] << std::endl;
             }
         }
     }
@@ -405,27 +418,78 @@ void SAW_model::Reconnect(int j)
 
 XY_SAW::XY_SAW(short int n, short d) : SAW_model(n, d) {
     start_conformation=0;
-    end_conformation=n-1;
 
-    for (int i = 1; i < n-1; i++)
+
+    coord_t middle = n/2;
+    //std::cout << "middle " << middle << std::endl;
+    for (int i = 1; i < middle; i++)
+    {
+        previous_monomers[i]=lattice->map_of_contacts_int[lattice->ndim2()*i +1];
+        sequence_on_lattice[i]=PI;
+        next_monomers[i]=lattice->map_of_contacts_int[lattice->ndim2()*i +0];
+        directions[i]=0;
+    }
+    //middle
+    previous_monomers[middle]=lattice->map_of_contacts_int[lattice->ndim2()*middle + 1];
+    sequence_on_lattice[middle]=PI;
+    next_monomers[middle]=lattice->map_of_contacts_int[lattice->ndim2()*middle + 2];
+    directions[middle] = 2;
+
+    middle = next_monomers[middle];
+    //std::cout << "middle " << middle << std::endl;
+    previous_monomers[middle]=lattice->map_of_contacts_int[lattice->ndim2()*(middle)+ 3];
+    sequence_on_lattice[middle]=PI;
+    next_monomers[middle]=lattice->map_of_contacts_int[lattice->ndim2()*(middle) + 1];
+    directions[middle] = 1;
+
+    middle = next_monomers[middle];
+    //std::cout << "middle " << middle << std::endl;
+    for (int i = n/2+2; i < n-1; i++)
+    {
+        //std::cout << "next " << lattice->map_of_contacts_int[lattice->ndim2()*middle  +0] << std::endl;
+        previous_monomers[middle ]=lattice->map_of_contacts_int[lattice->ndim2()*middle  +0];
+        sequence_on_lattice[middle ]=PI;
+        next_monomers[middle ]=lattice->map_of_contacts_int[lattice->ndim2()*middle  +1];
+        directions[middle] = 1;
+        middle = next_monomers[middle];
+       // std::cout << "middle " << middle << std::endl;
+
+    }
+
+    /*for (int i = 1; i < n-1; i++)
     {
         previous_monomers[i]=i-1;
         sequence_on_lattice[i]=PI;
         next_monomers[i]=i+1;
-    }
+    }*/
+    end_conformation=middle;
+
     sequence_on_lattice[0] = PI;
     sequence_on_lattice[end_conformation] = PI; //начальная последовательность
-    next_monomers[0] = 1;
-    previous_monomers[n-1] = n-2;
+    next_monomers[0] = lattice->map_of_contacts_int[lattice->ndim2()*0 +0];;
+    previous_monomers[end_conformation] = lattice->map_of_contacts_int[lattice->ndim2()*end_conformation +0]; ;
     E =  -(n-1);
 
     //сначала все направления - движение вправо
-    for (int i = 0; i < n-1; i++)
+    /*for (int i = 0; i < n-1; i++)
     {
         directions[i]=0;
-    }
+    }*/
 
     used_coords.resize(lattice->NumberOfNodes(), false  );
+
+
+    /*std::ofstream myfile ("example.txt");
+    long int current =  start_conformation;
+    long int step;
+    int k = 0;
+    for (int e = 0; e <  number_of_spins() ; e++)
+    {
+        myfile <<  directions[current] << " " << sequence_on_lattice[current] << std::endl;
+        current =  next_monomers[current];
+    }
+    myfile.close();*/
+    Energy();
 }
 
 void XY_SAW::Energy() {
@@ -443,7 +507,7 @@ void XY_SAW::Energy() {
         }
         current_position=next_monomers[current_position];
     }
-    E = -(hh/2.0);
+    E = (hh/2.0);
 }
 
 void XY_SAW::save_measurements() {

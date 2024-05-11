@@ -39,7 +39,7 @@ public:
     void run_simulation();
 
 private:
-    double p_for_local_update=0.5, p_for_reconnect=0.90;
+    double p_for_local_update=0.6, p_for_reconnect=0.90995;
 };
 
 

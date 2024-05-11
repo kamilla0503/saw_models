@@ -193,6 +193,7 @@ void Lattice_3D::radius(SAW_model *model) {
     model->eigval2 << eig2;
     model->aratio << 1.0*(eig1-eig2)*(eig1-eig2)/((eig1+eig2)*(eig1+eig2));
 
+
 }
 
 
